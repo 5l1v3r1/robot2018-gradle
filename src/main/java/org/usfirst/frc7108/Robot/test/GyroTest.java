@@ -10,26 +10,30 @@ public class GyroTest {
 
     private static Gyro gyro;
     
+    // Setup before tests
     @Before
     public void setup() {
-        // Construct classes here
+        // Construct gyro class here
         gyro = new Gyro();
     }
 
+    // Test if JUNit is working
     @Test
    public void testTest() {
       String str = "Junit is working";
       assertEquals("Junit is working",str);
    }
 
+   // Test if we can set and get the angle correctly
    @Test
    public void basicAngleTest() {
     gyro.setAngle(90);
     assertEquals(gyro.getAngle(), 90, 0.0001);
    }
 
+   // Test if our robot can turn to a specific angle 
    @Test
-   public void rotateTest() throws IOException{
+   public void rotateTest() throws IOException {
 
         // Open a file to write data
         File file = new File("/home/tezerv/voltran_ws/data/anglechange.txt");
@@ -40,21 +44,22 @@ public class GyroTest {
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw  = new BufferedWriter(fw);
 
-        double angularVelocity =  3; // w in rad/s
-        double dt = 0.02; // 20 ms constant loop
+        final double angularVelocity =  3; // w in rad/s, this is static for this test
+        final double dt = 0.02; // 20 ms constant loop
         double simTime = 0; // Start simulation from 0 seconds
-        double endTime = 1; // The simulation time
+        final double endTime = 1; // The simulation time
+        final double angleToStop = 90; // Turn until this angle
 
         gyro.setRotation(angularVelocity*180/Math.PI);
-        while(endTime >= simTime && gyro.getAngle() < 90) {
-            gyro.updateGyro();
-            simTime += dt;
-            String data = String.format("%f %f %f", simTime, gyro.getAngle(), gyro.getRotation());
-            bw.write(data);
-            bw.newLine();
+        while(endTime >= simTime && gyro.getAngle() < angleToStop) {
+            gyro.updateGyro(); // read new data from gyro
+            simTime += dt; // Update simulation time every loop
+            String data = String.format("%f %f %f", simTime, gyro.getAngle(), gyro.getRotation()); // Format the data
+            bw.write(data); // Write data to file
+            bw.newLine(); // Add newline for better reading
         }
-        bw.close();
-        assertEquals(90, gyro.getAngle(), 3);
+        bw.close(); // Don't forget to close the file!
+        assertEquals(90, gyro.getAngle(), 3); // if the angle has reached to target, test is passed
     }
 
 }

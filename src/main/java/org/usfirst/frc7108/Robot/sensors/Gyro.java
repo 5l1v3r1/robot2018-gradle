@@ -7,7 +7,7 @@ import org.usfirst.frc7108.Robot.RobotMap.robotType_;
 public class Gyro {
 	private double angle = 0; // The accumulated degrees from the get rotations per second function
 	private double rotation = 0; // The degrees of the blue gyro
-	public  double rotatedAmount = 0;
+	private double rotatedAmount = 0;
     // private I2C gyro = new I2C(I2C.Port.kOnboard, 0x68);
 		
 	public double getAngle () {
@@ -26,8 +26,8 @@ public class Gyro {
         rotation = rotationToSet;
     }
 
-	public void zeroGyro (double offset) {
-		rotation += offset;
+	public void zeroGyro () {
+        setAngle(0);
     }
 
     public Gyro() { // main constructor
@@ -93,10 +93,12 @@ public class Gyro {
             
 			int rawRotation = (highOrder << 8) + lowOrder;
 			
-			rotation = (rawRotation / 131.0) * 0.02; // 20ms constant loop, 131 is gyro scale factor
-            if (rotation > 0.055 || rotation < -0.055) { // Filter out noise
-                angle += -rotation; // angle in rad
-            }  
+            rotation = (rawRotation / 131.0); 
+            rotatedAmount = rotation*0.02; // 20ms constant loop, 131 is gyro scale factor
+            if (rotatedAmount > 0.055 || rotatedAmount < -0.055) { // Filter out noise
+                angle += rotatedAmount; // angle in degrees
+                angle = angle + rotatedAmount;
+            }
             return true; // Succesfully read from sensor     
         }
         return false; // Failed to read from sensor
