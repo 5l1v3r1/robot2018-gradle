@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.command.Command;
 
 
-public class AutonomusDrive extends Command{
+public class AutonomusDrive extends Command {
 
 	long startTime;
 	double seconds;
